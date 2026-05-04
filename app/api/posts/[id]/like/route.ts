@@ -17,11 +17,11 @@ export async function POST(
     const post = await Post.findById(id);
     if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const liked = post.likes.includes(userId);
+    const liked = post.likes.map(String).includes(String(userId));
     if (liked) {
-      post.likes.pull(userId);
+      post.likes = post.likes.filter((id) => String(id) !== String(userId)) as any;
     } else {
-      post.likes.push(userId);
+      post.likes.push(userId as any);
     }
     await post.save();
 
