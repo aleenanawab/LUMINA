@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "jetro": {
+      "type": "stdio",
+      "command": "C:\\Users\\Win 10\\.jetro\\runtime\\node-win32-x64.exe",
+      "args": [
+        "C:\\Users\\Win 10\\.jetro\\mcp-server\\index.js"
+      ],
+      "env": {
+        "JET_WORKSPACE": "d:\\Uptech\\major project\\lumina",
+        "JET_API_URL": "https://api.jetro.ai",
+        "PATH": "C:\\Users\\Win 10\\.jetro\\runtime;C:\\Users\\Win 10\\AppData\\Local\\Programs\\Microsoft VS Code;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs\\;C:\\Users\\Win 10\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Win 10\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Win 10\\AppData\\Roaming\\npm"
+      }
+    }
+  }
+}

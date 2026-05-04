@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f0f4ff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-border: #e2e8f0;
+  --muted: #64748b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html.dark {
+  --background: #050505;
+  --foreground: #ededed;
+  --card: #0d0d0d;
+  --card-border: #1a1a1a;
+  --muted: #888;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* ── Glass ── */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+html.dark .glass {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: none;
+}
+
+/* ── Glow ── */
+.glow-cyan {
+  box-shadow: 0 0 24px rgba(0, 255, 255, 0.18), 0 0 48px rgba(0, 255, 255, 0.06);
+}
+.glow-purple {
+  box-shadow: 0 0 24px rgba(191, 0, 255, 0.18), 0 0 48px rgba(191, 0, 255, 0.06);
+}
+
+/* ── Animated gradient border on hover ── */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(0,255,255,0.3); }
+  50%       { border-color: rgba(191,0,255,0.3); }
+}
+
+.hover-glow-border:hover {
+  animation: borderGlow 2s ease infinite;
+}
+
+/* ── Shimmer effect for skeleton loaders ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.08) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+html:not(.dark) .shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Tiptap ProseMirror ── */
+.ProseMirror {
+  min-height: 300px;
+  outline: none;
+  padding: 4px;
+  color: #0f172a;
+}
+
+html.dark .ProseMirror { color: #ededed; }
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #94a3b8;
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror > * + * { margin-top: 0.75em; }
+.ProseMirror h1 { font-size: 1.75rem; font-weight: 700; }
+.ProseMirror h2 { font-size: 1.4rem; font-weight: 600; }
+.ProseMirror blockquote { border-left: 3px solid #06b6d4; padding-left: 1rem; opacity: 0.8; }
+.ProseMirror code { background: rgba(0,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+.ProseMirror ul { list-style: disc; padding-left: 1.5rem; }
+.ProseMirror ol { list-style: decimal; padding-left: 1.5rem; }
