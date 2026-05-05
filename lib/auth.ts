@@ -40,15 +40,20 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        await connectDB();
-        const existing = await User.findOne({ email: user.email });
-        if (!existing) {
-          await User.create({
-            name: user.name ?? undefined,
-            email: user.email ?? undefined,
-            image: user.image ?? undefined,
-            role: "reader",
-          });
+        try {
+          await connectDB();
+          const existing = await User.findOne({ email: user.email });
+          if (!existing) {
+            await User.create({
+              name: user.name ?? undefined,
+              email: user.email ?? undefined,
+              image: user.image ?? undefined,
+              role: "reader",
+            });
+          }
+        } catch (e) {
+          console.error("signIn callback error:", e);
+          // still allow sign in even if DB fails
         }
       }
       return true;
