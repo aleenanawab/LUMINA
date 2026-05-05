@@ -7,10 +7,18 @@ import User from "@/models/User";
 
 export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  secret: process.env.AUTH_SECRET,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
     Credentials({
       credentials: {
@@ -18,22 +26,23 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-
-        await connectDB();
-        const user = await User.findOne({ email: credentials.email });
-        if (!user?.password) return null;
-
-        const isValid = await bcrypt.compare(credentials.password as string, user.password as string);
-        if (!isValid) return null;
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          role: user.role,
-        };
+        try {
+          if (!credentials?.email || !credentials?.password) return null;
+          await connectDB();
+          const user = await User.findOne({ email: credentials.email });
+          if (!user?.password) return null;
+          const isValid = await bcrypt.compare(credentials.password as string, user.password as string);
+          if (!isValid) return null;
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            role: user.role,
+          };
+        } catch {
+          return null;
+        }
       },
     }),
   ],
@@ -45,15 +54,14 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
           const existing = await User.findOne({ email: user.email });
           if (!existing) {
             await User.create({
-              name: user.name ?? undefined,
-              email: user.email ?? undefined,
-              image: user.image ?? undefined,
+              name: user.name ?? "",
+              email: user.email ?? "",
+              image: user.image ?? "",
               role: "reader",
             });
           }
         } catch (e) {
-          console.error("signIn callback error:", e);
-          // still allow sign in even if DB fails
+          console.error("signIn DB error:", e);
         }
       }
       return true;
@@ -67,8 +75,8 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
             token.id = dbUser._id.toString();
             token.role = dbUser.role;
           }
-        } catch (e) {
-          // keep existing token if DB fails
+        } catch {
+          // keep existing token
         }
       }
       return token;
@@ -83,9 +91,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.AUTH_SECRET,
+  session: { strategy: "jwt" },
 });
