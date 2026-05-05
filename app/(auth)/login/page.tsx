@@ -1,8 +1,8 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Mail, Lock, Zap, Globe2 } from "lucide-react";
@@ -10,24 +10,24 @@ import MeshBackground from "@/components/ui/MeshBackground";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/");
+    }
+  }, [status, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
+    const result = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
-
     if (result?.error) {
       setError("Invalid email or password");
     } else {
@@ -67,7 +67,7 @@ export default function LoginPage() {
         <div className="glass rounded-2xl p-8 border border-gray-200 dark:border-white/10">
           {/* Google Sign In */}
           <button
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => signIn("google", { callbackUrl: `${window.location.origin}/` })}
             className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-gray-200 dark:border-[#2a2a2a] text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-[#222] transition-all mb-6 text-sm font-medium"
           >
             <Globe2 size={18} />
